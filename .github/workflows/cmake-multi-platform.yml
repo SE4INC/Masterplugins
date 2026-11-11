@@ -25,12 +25,7 @@ jobs:
       shell: pwsh
       run: |
         New-Item -ItemType Directory -Force -Path salida_plugins
-        Get-ChildItem -Path build -Include .vst3,.dll,*.exe -Recurse | Copy-Item -Destination salida_plugins -Recurse -Force -ErrorAction SilentlyContinue
-        if (Test-Path "C:\Program Files\Common Files\VST3") {
-          Get-ChildItem -Path "C:\Program Files\Common Files\VST3" -Filter "*.vst3" -Recurse | Copy-Item -Destination salida_plugins -Recurse -Force -ErrorAction SilentlyContinue
-        }
-        Get-ChildItem -Path salida_plugins -Recurse
-
+        Get-ChildItem -Path build -Directory -Filter ".vst3" -Recurse | Where-Object { $_.FullName -notlike "\.vst3\*" } | Copy-Item -Destination salida_plugins -Recurse -Force
     - name: Empaquetar archivos
       uses: actions/upload-artifact@v4
       with:
