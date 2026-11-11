@@ -21,18 +21,18 @@ jobs:
     - name: Compilar Plugins
       run: cmake --build build --config Release
 
-    - name: Recolectar archivos VST3
+    - name: Recolectar archivos compilados
       shell: pwsh
       run: |
-        New-Item -ItemType Directory -Force -Path salida_vst3
-        Get-ChildItem -Path build -Filter "*.vst3" -Recurse | Copy-Item -Destination salida_vst3 -Recurse -Force
+        New-Item -ItemType Directory -Force -Path salida_plugins
+        Get-ChildItem -Path build -Include .vst3,.dll,*.exe -Recurse | Copy-Item -Destination salida_plugins -Recurse -Force -ErrorAction SilentlyContinue
         if (Test-Path "C:\Program Files\Common Files\VST3") {
-          Get-ChildItem -Path "C:\Program Files\Common Files\VST3" -Filter "*.vst3" -Recurse | Copy-Item -Destination salida_vst3 -Recurse -Force
+          Get-ChildItem -Path "C:\Program Files\Common Files\VST3" -Filter "*.vst3" -Recurse | Copy-Item -Destination salida_plugins -Recurse -Force -ErrorAction SilentlyContinue
         }
-        Get-ChildItem -Path salida_vst3
+        Get-ChildItem -Path salida_plugins -Recurse
 
-    - name: Empaquetar archivos VST3
+    - name: Empaquetar archivos
       uses: actions/upload-artifact@v4
       with:
-        name: Cris-Audio-Suite-VST3
-        path: salida_vst3/
+        name: Cris-Audio-Suite-Compilado
+        path: salida_plugins/
